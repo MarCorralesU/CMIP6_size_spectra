@@ -11,13 +11,13 @@ library(doBy)
 library(Metrics)
 
 
-ref = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/scripts/PSSdb_data_Taylor.csv')), as.is=TRUE)
+ref = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/PSSdb_data_Taylor.csv')), as.is=TRUE)
 ref <-ref[order(ref$biomes,ref$month),]
 ref <- ref[!(ref$biomes=='HCSS' & ( ref$month==12)),]#remove winter data for HCSS since it has very few data points
 ref$log_biovolume<-log10(ref$total_biovolume)
 
 
-d = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/scripts/CMIP6_data_Taylor.csv')), as.is=TRUE)
+d = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/CMIP6_data_Taylor.csv')), as.is=TRUE)
 d <-d[order(d$source,d$experiment,d$biomes,d$month),]
 d <- d[!(d$biomes=='HCSS' & (d$month==12)),]
 d$log_biovolume<-log10(d$total_biovolume)
@@ -32,9 +32,9 @@ d_full = rbind(ref,d)
 # get corr coefficient
 biomes<-c()
 models<-c()
-R2_slope<-c()
-R2_intercept<-c()
-R2_biovol<-c()
+R_slope<-c()
+R_intercept<-c()
+R_biovol<-c()
 
 d_PSSdb<- d_full[d_full$source=='PSSdb',]
 
@@ -49,11 +49,11 @@ for (b in unique(d_full$biomes)){
     R_slope<-c(R_slope, r_slope)
     
     
-    r_intercept<-corr(d_f$intercept[d_f$source=='PSSdb'], d_f$intercept[d_f$source==m], use = "pairwise")
+    r_intercept<-cor(d_f$intercept[d_f$source=='PSSdb'], d_f$intercept[d_f$source==m], use = "pairwise")
     R_intercept<-c(R_intercept, r_intercept)
     
     
-    r_biovol<-corr(d_f$log_biovolume[d_f$source=='PSSdb'], d_f$log_biovolume[d_f$source==m], use = "pairwise")
+    r_biovol<-cor(d_f$log_biovolume[d_f$source=='PSSdb'], d_f$log_biovolume[d_f$source==m], use = "pairwise")
     R_biovol<-c(R_biovol, r_biovol)
     
     models<-c(models, m)
@@ -82,18 +82,18 @@ for (b in unique(d_full$biomes)){
     SD_slope<-c(SD_slope, sd_slope)
     
     
-    sd_intercept<-sd(d_f$intercept[d_f$source==m])
+    sd_intercept<-sd(10^(d_f$intercept[d_f$source==m]))
     SD_intercept<-c(SD_intercept, sd_intercept)
     
     
-    sd_biovol<-sd(d_f$log_biovolume[d_f$source==m])
+    sd_biovol<-sd(10^(d_f$log_biovolume[d_f$source==m]))
     SD_biovol<-c(SD_biovol, sd_biovol)
     
     models<-c(models, m)
   }
 }
 SD_df<-data.frame(models, biomes, SD_slope, SD_intercept, SD_biovol)
-write.csv(SD_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/stDev_CMIP6.csv')), row.names=FALSE)
+write.csv(SD_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/stDev_CMIP6_untransformed.csv')), row.names=FALSE)
 
 # get RMSE
 biomes<-c()
@@ -115,18 +115,18 @@ for (b in unique(d_full$biomes)){
     RMSE_slope<-c(RMSE_slope, rmse_slope)
   
    
-    rmse_intercept<-rmse(d_f$intercept[d_f$source=='PSSdb'], d_f$intercept[d_f$source==m])
+    rmse_intercept<-rmse(10^(d_f$intercept[d_f$source=='PSSdb']), 10^(d_f$intercept[d_f$source==m]))
     RMSE_intercept<-c(RMSE_intercept, rmse_intercept)
   
     
-    rmse_biovol<-rmse(d_f$log_biovolume[d_f$source=='PSSdb'], d_f$log_biovolume[d_f$source==m])
+    rmse_biovol<-rmse(10^(d_f$log_biovolume[d_f$source=='PSSdb']), 10^(d_f$log_biovolume[d_f$source==m]))
     RMSE_biovol<-c(RMSE_biovol, rmse_biovol)
   
     models<-c(models, m)
 }
 }
 RMSE_df<-data.frame(models, biomes, RMSE_slope, RMSE_intercept, RMSE_biovol)
-write.csv(RMSE_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/RMSE_CMIP6.csv')), row.names=FALSE)
+write.csv(RMSE_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/RMSE_CMIP6_unstransformed.csv')), row.names=FALSE)
 
 
 #Centered RMSE
@@ -242,7 +242,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
   
 }
 
-###.       biovolume
+###.       log-biovolume
 for (biom in c('LC', 'HCSS', 'HCPS')){
   # for this, remember how you had to use fix(taylor.diagram) to change the maxsd parameter
   if (biom=='LC'){
@@ -278,6 +278,42 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
   
 }
 
+
+###.       log-biovolume
+for (biom in c('LC', 'HCSS', 'HCPS')){
+  # for this, remember how you had to use fix(taylor.diagram) to change the maxsd parameter
+  if (biom=='LC'){
+    symbol<-17
+  }
+  else if(biom=='HCSS'){
+    symbol<-16
+  }
+  else if(biom=='HCPS'){
+    symbol<-15
+  }
+  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_untransformed", biom,".pdf", sep=""),   # The directory you want to save the file in
+      width = 7, # The width of the plot in inches
+      height = 7)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='CESM' & d$biomes==biom & d$experiment=='hist'],col="#0077bb", pch=symbol,ref.sd=FALSE,
+                     grad.corr.lines=c(0.2,0.4,0.6,0.8, 0.9), pos.cor = FALSE, 
+                     #pcex=1.5,cex.axis=0.1,
+                     mar=c(5,5,5,5), gamma.col=19, 
+                     pcex=2, cex.axis=1, cex.lab=1, alpha=0.5,
+                     lwd=10,font=3,lty=3, x_axis_range=1)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='CMCC' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#33BBEE', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='CNRM' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#009988', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='GFDL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='#EE7733', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='GISS' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#CC3311', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='IPSL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='darkgoldenrod1', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+  taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='UKESM' & d$biomes==biom & d$experiment=='hist'],add =TRUE, col='#BBBBBB', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+  
+  lpos<-sd(ref$total_biovolume)*2# remember this controls x position of legend
+  #legend(x=lpos*0.95, y=lpos*1.1, cex= 0.5, legend=c('LC', 'HCSS', 'HCPS'),pch=c(17, 16, 15))
+  legend(x=lpos*0.7, y=lpos*1.1, legend=c("CESM","CMCC","CNRM","GFDL","GISS","IPSL","UKESM"),pch=16,cex = 0.5, col=c("#0077BB","#33BBEE","#009988","#EE7733","#CC3311",'darkgoldenrod1','#BBBBBB'))
+  
+  dev.off()
+  
+}
 
                                   ## explore pssdb file climatology, to determine whether data removal in HCSS is valid
 library(tidyverse)
