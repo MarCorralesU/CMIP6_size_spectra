@@ -2,3 +2,5 @@
 scripts/.ipynb_checkpoints/
 figures
 data
+scripts/.RData
+scripts/.Rhistory
