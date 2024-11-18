@@ -1,6 +1,6 @@
-### <div style="clear: both;"> <img src="figures/readme/pssdb-logo.png" alt= “” align="center" width="70" height="70" > <font size= “1”>The Pelagic Size Structure database ([PSSdb](https://pssdb.net/ ""))</font></div>  
-###### Jessica Luo, Rainer Kiko, Marco Corrales-Ugalde, Mathilde Dugenne, Todd O'Brien, Charles Stock, Jean-Olivier Irisson, Lars Stemmann, Fabien Lombard
-<a href="mailto:contact@pssdb.net">Contact us</a>
+### <div style="clear: both;">  <font size= “1”>Code repository for the manuscript 'Assessment of plankton size structure from CMIP6 Earth System Models with a novel pelagic size structure database'</font></div>  
+###### Marco Corrales-Ugalde, Jessica Y. Luo, Colleen M. Petrik, Charles A. Stock, Mathilde Dugenne, Rainer Kiko, Fabien Lombard, Todd O'Brien and Lars Stemmann
+<a href="mailto:mcugalde88@gmail.com">Contact</a>
 
 
 We are developing the Pelagic Size Structure database to provide globally consistent datasets of living and non-living particle size distributions obtained from marine imaging devices.
