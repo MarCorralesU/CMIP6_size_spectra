@@ -4,3 +4,4 @@ figures
 data
 scripts/.RData
 scripts/.Rhistory
+.ipynb_checkpoints
