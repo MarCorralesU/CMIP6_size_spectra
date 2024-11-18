@@ -3,12 +3,7 @@
 <a href="mailto:mcugalde88@gmail.com">Contact</a>
 
 
-We are developing the Pelagic Size Structure database to provide globally consistent datasets of living and non-living particle size distributions obtained from marine imaging devices.
-
-The objectives for PSSdb are:
-
-1. provide multi-level, harmonized products of plankton size structure of increasing taxonomic resolution, matching the spatio-temporal resolution of current biogeochemical models.
-NOTE:  the latest PSSdb data products can be downloaded [here](https://pssdb.net/ ""), which includes the full list of data providers.
+This repository documents the code used to generate the results for Corrales-Ugalde et al., usign the CMIP6 Earth System Model outputs from [ESGF-CoG](https://esgfnode.llnl.gov/search/cmip6/ "") and [ISIMIP DKRZ](https://www.isimip.org/dashboard/accessing-isimip-data-dkrz-server/ ""), and the  latest version of the [bulk PSSdb data products](https://zenodo.org/records/11050013 ""). the 
 
 
 2. implement a workflow able to retrieve count, size, and taxonomic information from online imaging data streams.
