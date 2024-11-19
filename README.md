@@ -14,9 +14,9 @@ PSSdb weekly data products can be made available upon request.
 
 3. Script 3 processes the .nc datafiles generated in scripts 1.1-1.7 and performs the data agreggation by biome and season to perform the model assessment skill with PSSdb
 
-4. Scripts 4.1-4.x generate the figures 
+4. Scripts 4.1-4.x generate the figures in the main text and supplementary material. 
 
-5. Script 5.1 contains a modified version of the taylor.diagram function of the [plotrix package by Lemon et al. (2006)](https://cran.r-project.org/web/packages/plotrix/index.html ""), and script 5.2 generates the data and figures in tables.... and figures.... 
+5. Script 5.1 contains a modified version of the taylor.diagram function of the [plotrix package by Lemon et al. (2006)](https://cran.r-project.org/web/packages/plotrix/index.html ""), and script 5.2 generated the coefficients included in tables S3-S7 and plots in figures 8 and S7
 
 
 
