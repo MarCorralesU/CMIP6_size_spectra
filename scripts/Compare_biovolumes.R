@@ -35,7 +35,7 @@ for (s in coeff_df$source){
    set.seed(i)
    randomLogBiovolume <-rlnorm(n=nrow(d), meanlog=meanlogBiovol+i, sdlog=sdlogBiovol+i)
    logNB<-(coeff_df$slope[coeff_df$source==s]*log10(randomLogBiovolume))+coeff_df$log10_intercept[coeff_df$source==s] # use size spectra to get log normalized biovolume
-   biovol<- (10^(logNB))*randomLogBiovolume
+   biovol<- (10^(logNB))*randomLogBiovolume # multiply it by the biovol 'size class' to get the total biovolume of each size
    source<-c(source, s)
    biovols<-c(biovols, sum(biovol)) # sum the biovolume across comparable size ranges 
 }
