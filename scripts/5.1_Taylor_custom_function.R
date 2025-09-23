@@ -3,7 +3,7 @@ taylor.diagram_mod<- function (ref, model, add = FALSE, col = "red", pch = 19, p
                                show.gamma = TRUE, ngamma = 3, gamma.col = 8, sd.arcs = 0, 
                                ref.sd = FALSE, sd.method = "sample", grad.corr.lines = c(0.2, 
                                                                                          0.4, 0.6, 0.8, 0.9), pcex = 1, cex.axis = 1, normalize = FALSE, 
-                               mar = c(4, 3, 4, 3), x_axis_range=1, ...) 
+                               mar = c(4, 3, 4, 3), x_axis_range=4, ...) 
 {
   grad.corr.full <- c(0, 0.2, 0.4, 0.6, 0.8, 0.9, 0.95, 0.99, 1)
   R <- cor(ref, model, use = "pairwise")

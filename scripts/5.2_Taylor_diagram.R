@@ -4,20 +4,20 @@
 #environment(taylor.diagram_ed) <- asNamespace('plotrix')
 #assignInNamespace("taylor.diagram", taylor.diagram_ed, ns = "plotrix")
 setwd(file.path(path.expand('~/GIT/CMIP6_size_spectra/scripts')))
-source('Taylor_custom_function.R')
+source('5.1_Taylor_custom_function.R')
 library(dplyr)
 library(tidyverse)
 library(doBy)
 library(Metrics)
 
 
-ref = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/PSSdb_data_Taylor.csv')), as.is=TRUE)
+ref = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/PSSdb_data_Taylor_116_2000.csv')), as.is=TRUE)
 ref <-ref[order(ref$biomes,ref$month),]
 ref <- ref[!(ref$biomes=='HCSS' & ( ref$month==12)),]#remove winter data for HCSS since it has very few data points
 ref$log_biovolume<-log10(ref$total_biovolume)
 
 
-d = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/CMIP6_data_Taylor.csv')), as.is=TRUE)
+d = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/CMIP6_data_Taylor_116_2000.csv')), as.is=TRUE)
 d <-d[order(d$source,d$experiment,d$biomes,d$month),]
 d <- d[!(d$biomes=='HCSS' & (d$month==12)),]
 d$log_biovolume<-log10(d$total_biovolume)
@@ -60,7 +60,7 @@ for (b in unique(d_full$biomes)){
   }
 }
 R_df<-data.frame(models, biomes, R_slope, R_intercept, R_biovol)
-write.csv(R_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/corr_CMIP6.csv')), row.names=FALSE)
+write.csv(R_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/corr_CMIP6_116_2000.csv')), row.names=FALSE)
 
 # get standard deviation
 biomes<-c()
@@ -82,18 +82,20 @@ for (b in unique(d_full$biomes)){
     SD_slope<-c(SD_slope, sd_slope)
     
     
-    sd_intercept<-sd(10^(d_f$intercept[d_f$source==m]))
+    #sd_intercept<-sd(10^(d_f$intercept[d_f$source==m]))
+    sd_intercept<-sd(d_f$intercept[d_f$source==m])
     SD_intercept<-c(SD_intercept, sd_intercept)
     
     
-    sd_biovol<-sd(10^(d_f$log_biovolume[d_f$source==m]))
+    #sd_biovol<-sd(10^(d_f$log_biovolume[d_f$source==m]))
+    sd_biovol<-sd(d_f$log_biovolume[d_f$source==m])
     SD_biovol<-c(SD_biovol, sd_biovol)
     
     models<-c(models, m)
   }
 }
 SD_df<-data.frame(models, biomes, SD_slope, SD_intercept, SD_biovol)
-write.csv(SD_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/stDev_CMIP6_untransformed.csv')), row.names=FALSE)
+write.csv(SD_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/stDev_CMIP6_116_2000.csv')), row.names=FALSE)
 
 # get RMSE
 biomes<-c()
@@ -126,7 +128,7 @@ for (b in unique(d_full$biomes)){
 }
 }
 RMSE_df<-data.frame(models, biomes, RMSE_slope, RMSE_intercept, RMSE_biovol)
-write.csv(RMSE_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/RMSE_CMIP6_unstransformed.csv')), row.names=FALSE)
+write.csv(RMSE_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/RMSE_CMIP6_unstransformed_116_2000.csv')), row.names=FALSE)
 
 
 #Centered RMSE
@@ -166,7 +168,7 @@ for (b in unique(d_full$biomes)){
   }
 }
 CRMSE_df<-data.frame(models, biomes, CRMSE_slope, CRMSE_intercept, CRMSE_biovol)
-write.csv(CRMSE_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/CenteredRMSE_CMIP6.csv')), row.names=FALSE)
+write.csv(CRMSE_df, file.path(path.expand('~/GIT/CMIP6_size_spectra/data/CenteredRMSE_CMIP6_116_2000.csv')), row.names=FALSE)
 
 # modified 11/11/2024, separate taylor diagram by biome and coefficient
 
@@ -198,7 +200,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
    taylor.diagram_mod(ref$slope[ref$biomes==biom], d$slope[d$source=='IPSL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='darkgoldenrod1', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
    taylor.diagram_mod(ref$slope[ref$biomes==biom], d$slope[d$source=='UKESM' & d$biomes==biom & d$experiment=='hist'],add =TRUE, col='#BBBBBB', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
 
-   lpos<-sd(ref$slope)*0.6# remember this controls x position of legend
+   lpos<-sd(ref$slope)*3# remember this controls x position of legend
    legend(x=lpos*0.95, y=lpos*1.1, cex= 0.5, legend=c('LC', 'HCSS', 'HCPS'),pch=c(17, 16, 15))
    legend(x=lpos*0.7, y=lpos*1.1, legend=c("CESM","CMCC","CNRM","GFDL","GISS","IPSL","UKESM"),pch=16,cex = 0.5, col=c("#0077BB","#33BBEE","#009988","#EE7733","#CC3311",'darkgoldenrod1','#BBBBBB'))
 
@@ -254,7 +256,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
   else if(biom=='HCPS'){
     symbol<-15
   }
-  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_mod_experiment_superzoomed", biom,".pdf", sep=""),   # The directory you want to save the file in
+  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_mod_experiment_superzoomed_116-2000_", biom,".pdf", sep=""),   # The directory you want to save the file in
       width = 7, # The width of the plot in inches
       height = 7)
   taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='CESM' & d$biomes==biom & d$experiment=='hist'],col="#0077bb", pch=symbol,ref.sd=FALSE,
@@ -262,15 +264,15 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
                      #pcex=1.5,cex.axis=0.1,
                      mar=c(5,5,5,5), gamma.col=19, 
                      pcex=2, cex.axis=1, cex.lab=1, alpha=0.5,
-                     lwd=10,font=3,lty=3, x_axis_range=0.3)
-  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='CMCC' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#33BBEE', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
-  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='CNRM' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#009988', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
-  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='GFDL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='#EE7733', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
-  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='GISS' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#CC3311', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
-  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='IPSL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='darkgoldenrod1', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
-  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='UKESM' & d$biomes==biom & d$experiment=='hist'],add =TRUE, col='#BBBBBB', pcex=2,alpha=0.5,pch=symbol, x_axis_range=0.5)
+                     lwd=10,font=3,lty=3, x_axis_range=1.9)# modify x_axis_range to zoom in/out of the graph
+  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='CMCC' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#33BBEE', pcex=2,alpha=0.5,pch=symbol) 
+  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='CNRM' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#009988', pcex=2,alpha=0.5,pch=symbol)
+  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='GFDL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='#EE7733', pcex=2,alpha=0.5,pch=symbol)
+  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='GISS' & d$biomes==biom & d$experiment=='hist'], add =TRUE, col='#CC3311', pcex=2,alpha=0.5,pch=symbol)
+  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='IPSL' & d$biomes==biom & d$experiment=='hist'], add =TRUE,col='darkgoldenrod1', pcex=2,alpha=0.5,pch=symbol)
+  taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='UKESM' & d$biomes==biom & d$experiment=='hist'],add =TRUE, col='#BBBBBB', pcex=2,alpha=0.5,pch=symbol)
   
-  lpos<-sd(ref$log_biovolume)*2# remember this controls x position of legend
+  lpos<-sd(ref$log_biovolume)*30# remember this controls x position of legend
   #legend(x=lpos*0.95, y=lpos*1.1, cex= 0.5, legend=c('LC', 'HCSS', 'HCPS'),pch=c(17, 16, 15))
   legend(x=lpos*0.7, y=lpos*1.1, legend=c("CESM","CMCC","CNRM","GFDL","GISS","IPSL","UKESM"),pch=16,cex = 0.5, col=c("#0077BB","#33BBEE","#009988","#EE7733","#CC3311",'darkgoldenrod1','#BBBBBB'))
   
@@ -291,7 +293,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
   else if(biom=='HCPS'){
     symbol<-15
   }
-  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_untransformed", biom,".pdf", sep=""),   # The directory you want to save the file in
+  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_untransformed_116-2000_", biom,".pdf", sep=""),   # The directory you want to save the file in
       width = 7, # The width of the plot in inches
       height = 7)
   taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='CESM' & d$biomes==biom & d$experiment=='hist'],col="#0077bb", pch=symbol,ref.sd=FALSE,
