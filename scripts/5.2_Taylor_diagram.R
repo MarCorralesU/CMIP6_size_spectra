@@ -11,10 +11,11 @@ library(doBy)
 library(Metrics)
 
 
-ref = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/PSSdb_data_Taylor_116_2000.csv')), as.is=TRUE)
+ref = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/PSSdb_data_Taylor-4.csv')), as.is=TRUE)
 ref <-ref[order(ref$biomes,ref$month),]
 ref <- ref[!(ref$biomes=='HCSS' & ( ref$month==12)),]#remove winter data for HCSS since it has very few data points
-ref$log_biovolume<-log10(ref$total_biovolume)
+ref$log_biovolume<-log10(ref$subset_biovolume)
+names(ref)[names(ref) == "subset_biovolume"] <- "total_biovolume"
 
 
 d = read.csv(file.path(path.expand('~/GIT/CMIP6_size_spectra/data/CMIP6_data_Taylor_116_2000.csv')), as.is=TRUE)
@@ -256,7 +257,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
   else if(biom=='HCPS'){
     symbol<-15
   }
-  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_mod_experiment_superzoomed_116-2000_", biom,".pdf", sep=""),   # The directory you want to save the file in
+  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_116-2000_correct_biovol_", biom,".pdf", sep=""),   # The directory you want to save the file in
       width = 7, # The width of the plot in inches
       height = 7)
   taylor.diagram_mod(ref$log_biovolume[ref$biomes==biom], d$log_biovolume[d$source=='CESM' & d$biomes==biom & d$experiment=='hist'],col="#0077bb", pch=symbol,ref.sd=FALSE,
@@ -281,7 +282,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
 }
 
 
-###.       log-biovolume
+###.       untransformed-biovolume
 for (biom in c('LC', 'HCSS', 'HCPS')){
   # for this, remember how you had to use fix(taylor.diagram) to change the maxsd parameter
   if (biom=='LC'){
@@ -293,7 +294,7 @@ for (biom in c('LC', 'HCSS', 'HCPS')){
   else if(biom=='HCPS'){
     symbol<-15
   }
-  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_untransformed_116-2000_", biom,".pdf", sep=""),   # The directory you want to save the file in
+  pdf(file = paste("/Users/mc4214/GIT/CMIP6_size_spectra/figures/Taylor_biovolume_untransformed_116-2000_fixed_biovol_", biom,".pdf", sep=""),   # The directory you want to save the file in
       width = 7, # The width of the plot in inches
       height = 7)
   taylor.diagram_mod(ref$total_biovolume[ref$biomes==biom], d$total_biovolume[d$source=='CESM' & d$biomes==biom & d$experiment=='hist'],col="#0077bb", pch=symbol,ref.sd=FALSE,
